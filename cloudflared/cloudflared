@@ -6,15 +6,16 @@ STOP=50
 # Parameters
 cfd_bin="/usr/bin/cloudflared"
 cfd_token="your_token"
+edge_ip="4"
 
 function screen_pid(){
-    screen -ls | grep -oE "[0-9]+\.cloudflared\t" | sed -e "s/\..*$//g"
+    screen -ls | grep -oE "[0-9]+\.cloudflared" | sed -e "s/\..*$//g"
 }
 
 start(){
     # Start Cloudflare
     if [[ $(screen -ls | grep -wc "cloudflared") -eq 0 ]]; then
-        screen -dmS cloudflared ${cfd_bin} --no-autoupdate tunnel run --token ${cfd_token}
+        screen -dmS cloudflared ${cfd_bin} --edge-ip-version ${edge_ip:-4} --no-autoupdate tunnel run --token ${cfd_token}
     fi
 }
 
