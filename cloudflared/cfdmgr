@@ -24,7 +24,7 @@ function install_prerequisite() {
 }
 
 function compare_versions() {
-	[[ "$(echo "$1"$'\n'"$v2" | sort -V | head -n1)" == "$v1" ]]
+	[ ${2//./} -gt ${1//./} ] && return 1 || return 0
 }
 
 # Download and install Cloudflared binaries
@@ -74,7 +74,7 @@ function install_binary() {
 	fi
 
 	# Install init.d
-	wget -qO ${file_initd} --show-progress "https://raw.githubusercontent.com/GegeDesembri/openwrt-tools/master/cloudflared/cloudflared"
+	wget -qO ${file_initd} --show-progress "https://raw.githubusercontent.com/regae/openwrt-tools/master/cloudflared/cloudflared"
 	chmod +x ${file_initd}
 }
 
