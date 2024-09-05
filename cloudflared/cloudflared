@@ -8,6 +8,9 @@ cfd_bin="/usr/bin/cloudflared"
 cfd_token="your_token"
 edge_ip="4"
 
+[ -f /root/cloudflared_token ] && . /root/cloudflared_token
+[ -z "$TOKEN" ] || cfd_token=$TOKEN
+
 function screen_pid(){
     screen -ls | grep -oE "[0-9]+\.cloudflared" | sed -e "s/\..*$//g"
 }
