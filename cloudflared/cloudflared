@@ -17,6 +17,7 @@ function screen_pid(){
 
 start(){
     # Start Cloudflare
+	ping -6 -c 1 -W 3 2001:4860:4860::8888 > /dev/null && edge_ip=6
     if [[ $(screen -ls | grep -wc "cloudflared") -eq 0 ]]; then
         screen -dmS cloudflared ${cfd_bin} --edge-ip-version ${edge_ip:-4} --no-autoupdate tunnel run --token ${cfd_token}
     fi
@@ -25,7 +26,7 @@ start(){
 stop(){
     echo -e "Stopping Cloudflared"
     if [[ "$(screen_pid)" == '' ]]; then
-        echo -e "Cloudflared stopped"
+        echo -e "Cloudflared already stopped"
     else
         until [[ "$(screen_pid)" == '' ]]; do
             kill $(screen_pid)
