@@ -10,7 +10,7 @@ script_name="$(basename "$0")"
 # Checking if packages installed
 function check_prerequisite() {
 	unset list_pkg
-	list_pkg=$(opkg list-installed | grep -c "^bash \-\|^screen \-\|^jq \-\|^wget \-\|^wget\-ssl \-\|^curl \-\|^curl\-ssl \-")
+	list_pkg=$(opkg list-installed | busybox grep -c "^bash \-\|^screen \-\|^jq \-\|^wget \-\|^wget\-ssl \-\|^curl \-\|^curl\-ssl \-")
 	if [[ ${list_pkg} -lt 3 ]]; then
 		echo -e "All/some required packages is not installed correctly or something wrong...."
 		echo -e "Updating package repositories..."
@@ -24,6 +24,7 @@ function install_prerequisite() {
 }
 
 function compare_versions() {
+#	[[ "$(echo "$1"$'\n'"$v2" | sort -V | head -n1)" == "$v1" ]]
 	[ ${2//./} -gt ${1//./} ] && return 1 || return 0
 }
 
@@ -53,6 +54,8 @@ function install_binary() {
 	elif [[ "$(uname -m)" == *"i386"* ]]; then
 		archie="linux-386"
 	elif [[ "$(uname -m)" == *"armhf"* ]]; then
+		archie="linux-armhf"
+	elif [[ "$(uname -m)" == *"armv7l"* ]]; then
 		archie="linux-armhf"
 	elif [[ "$(uname -m)" == *"arm"* ]]; then
 		archie="linux-arm"
@@ -147,7 +150,8 @@ function token_update() {
 
 # Enable/disable Cloudflared autostart
 function init_toggler() {
-	if [[ $(grep "cfd_token=" ${file_initd} | awk '{print length}') -gt 30 ]] && [[ $1 == "start" ]]; then
+#	if [[ $(grep "cfd_token=" ${file_initd} | awk '{print length}') -gt 30 ]] && [[ $1 == "start" ]]; then
+	if [[ $1 == "start" ]]; then
 		# Disable Cloudflared
 		${file_initd} disable
 		${file_initd} stop
@@ -155,7 +159,8 @@ function init_toggler() {
 		${file_initd} enable
 		${file_initd} start
 		echo -e "✔ Cloudflared Autostart activated."
-	elif [[ $(grep "cfd_token=" ${file_initd} | awk '{print length}') -gt 30 ]] && [[ $1 == "stop" ]]; then
+#	elif [[ $(grep "cfd_token=" ${file_initd} | awk '{print length}') -gt 30 ]] && [[ $1 == "stop" ]]; then
+	elif [[ $1 == "stop" ]]; then
 		# Disable Cloudflared
 		${file_initd} disable
 		${file_initd} stop
