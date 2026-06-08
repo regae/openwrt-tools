@@ -79,6 +79,11 @@ function install_binary() {
 	# Install init.d
 	wget -qO ${file_initd} --show-progress "https://raw.githubusercontent.com/regae/openwrt-tools/master/cloudflared/cloudflared"
 	chmod +x ${file_initd}
+
+	# Install sysctl conf
+	wget -qO /etc/sysctl.d/30-cloudflared.conf --show-progress "https://raw.githubusercontent.com/regae/openwrt-tools/master/cloudflared/30-cloudflared.conf"
+	chmod 0644 /etc/sysctl.d/30-cloudflared.conf
+	/etc/init.d/sysctl restart
 }
 
 # Update Cloudflared binary
