@@ -50,6 +50,8 @@ start_service() {
 
 	procd_append_param command "run"
 
+	sysctl -w net.ipv4.ping_group_range="0 429296729"
+
 	if [ -n "$token" ]; then
 		# Remotely-managed tunnel (recommended by Cloudflare)
 		procd_append_param command "--token" "$token"
@@ -68,4 +70,9 @@ service_triggers() {
 	for ifname in $interfaces; do
 		procd_add_interface_trigger "interface.*.up" "$ifname" /etc/init.d/cloudflared restart
 	done
+}
+
+
+stop_service(){
+	sysctl -w net.ipv4.ping_group_range="1 0"
 }
